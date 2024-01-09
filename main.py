@@ -8,6 +8,7 @@ def terminate():
     pygame.quit()
     sys.exit()
 
+
 # класс шара
 class Ball:
     def __init__(self, x, radius):
@@ -21,7 +22,7 @@ class Ball:
 
     # функция движения шара
     def update(self):
-        if (self.y + self.radius) >= height:
+        if (self.y + self.radius) >= height - 10:
             pass
         else:
             self.y += self.speed
@@ -30,11 +31,6 @@ class Ball:
     def draw(self):
         pygame.draw.circle(screen, 'green', (self.x, self.y), self.radius)
         pygame.draw.line(screen, 'red', (0, self.deathline), (width, self.deathline), 5)
-
-    # функция получения радиуса
-    def print_radius(self):
-        return self.radius
-
 
 if __name__ == '__main__':
     # Инициализация
@@ -47,7 +43,10 @@ if __name__ == '__main__':
     balls = []
     running = True
     # Создание начального шара
-    ball = Ball(pygame.mouse.get_pos()[0], random.randint(30, 50))
+
+    radiuss = [30, 40, 50, 60, 70, 80]
+    print(radiuss[:3])
+    ball = Ball(pygame.mouse.get_pos()[0], random.choice(radiuss[:2]))
     balls.append(ball)
     while running:
 
@@ -79,6 +78,12 @@ if __name__ == '__main__':
                 dy = balls[i].y - balls[j].y
                 distance = ((dx ** 2) + (dy ** 2)) ** 0.5
                 if distance < balls[i].radius + balls[j].radius:
+                    if balls[i].radius == balls[j].radius:
+                        balls[i].radius = radiuss[radiuss.index(balls[i].radius) + 1]
+                        balls[i].y -= 20
+                        del balls[j]
+                        break
+                        # print(balls[i].radius)
                     balls[i].speed *= 0
                     balls[j].speed *= 0
 
@@ -86,7 +91,7 @@ if __name__ == '__main__':
         # тут проверка выхода за границы и создание нового шара
         try:
             if (ball.y - ball.radius) // ball.speed == ball.deathline // ball.speed:
-                ball = Ball(pygame.mouse.get_pos()[0], random.randint(30, 50))
+                ball = Ball(pygame.mouse.get_pos()[0], random.choice(radiuss[:3]))
                 balls.append(ball)
         except Exception as e:
             print('Game over')
